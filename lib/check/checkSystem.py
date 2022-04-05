@@ -6,9 +6,9 @@ from .utils import get_ts_from_time_str
 
 
 class CheckSystem(Base):
+    api_call = '/info'
     interval = int(os.getenv('OSDA_CHECK_SYSTEM_INTERVAL', 300))
     type_name = 'system'
-    api_call = '/info'
 
     @staticmethod
     def on_item(itm):

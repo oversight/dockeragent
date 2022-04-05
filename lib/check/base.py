@@ -20,6 +20,7 @@ URL_RE = re.compile(
 class Base:
 
     address = None
+    api_call = ''
     api_version = 'v1.41'
     interval = 300
     type_name = None
