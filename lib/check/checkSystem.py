@@ -59,5 +59,7 @@ class CheckSystem(Base):
             'liveRestoreEnabled': itm['LiveRestoreEnabled'],
             'isolation': itm['Isolation'],
             'initBinary': itm['InitBinary'],
-            'warnings': str(itm['Warnings']),
+            # TODO check '-character needs to be removed from string:
+            # "['Warning1', 'Warning2']"
+            'warnings': str(itm['Warnings'])  # .replace('\'', ''),
         }
