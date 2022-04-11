@@ -4,8 +4,6 @@ import re
 
 import aiohttp
 
-from ..logger import setup_logger
-
 
 URL_RE = re.compile(
     r'^(?:http|ftp)s?://'  # http:// or https://
@@ -59,10 +57,10 @@ class Base:
             raise Exception(f'{cls.__name__} is disabled')
         await asyncio.sleep(cls.interval)  # TODO is this right?
         # TODO asyncio.wait_for?
-        return await cls.dockerApiCall(cls.api_call)
+        return await cls.docker_api_call(cls.api_call)
 
     @classmethod
-    async def dockerApiCall(cls, query):
+    async def docker_api_call(cls, query: str):
         url = f'http://{cls.api_version}' + query
         async with aiohttp.ClientSession(connector=cls.get_conn()) as session:
             async with session.get(url) as resp_data:
@@ -81,11 +79,11 @@ class Base:
         return aiohttp.UnixConnector(path=address)
 
     @staticmethod
-    def on_item(itm):
+    def on_item(itm: dict):
         return itm
 
     @classmethod
-    def on_items(cls, itms):
+    def on_items(cls, itms: list):
         out = {}
         for i in itms:
             itm = cls.on_item(i)
@@ -94,10 +92,7 @@ class Base:
         return out
 
     @classmethod
-    def iterate_results(cls, data):
-        if type(data) is not list:
-            data = [data]
-
+    def iterate_results(cls, data: list):
         itms = cls.on_items(data)
         state = {}
         state[cls.type_name] = itms

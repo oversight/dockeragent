@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-import time
 
 import aiohttp
 
@@ -27,8 +26,8 @@ class Agent:
         ]
 
         self.token = os.getenv('OSDA_TOKEN', None)
-        self.environment_uuid = int(os.getenv('OSDA_ENVIRONMENT_UUID', 0))
-        self.host_uuid = int(os.getenv('OSDA_HOST_UUID', 0))
+        self.environment_uuid = int(os.getenv('OSDA_ENVIRONMENT_UUID', '0'))
+        self.host_uuid = int(os.getenv('OSDA_HOST_UUID', '0'))
         self.api_uri = os.getenv('OSDA_API_URI', None)
 
     @staticmethod

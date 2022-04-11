@@ -1,16 +1,16 @@
 import os
 
 from .base import Base
-from .utils import get_ts_from_time_str
+from .utils import get_ts_from_time_str, format_list_to_str
 
 
 class CheckSystem(Base):
     api_call = '/info'
-    interval = int(os.getenv('OSDA_CHECK_SYSTEM_INTERVAL', 300))
+    interval = int(os.getenv('OSDA_CHECK_SYSTEM_INTERVAL', '300'))
     type_name = 'system'
 
     @staticmethod
-    def on_item(itm):
+    def on_item(itm: dict):
         return {
             'id': itm['ID'],
             'containers': itm['Containers'],
@@ -59,7 +59,13 @@ class CheckSystem(Base):
             'liveRestoreEnabled': itm['LiveRestoreEnabled'],
             'isolation': itm['Isolation'],
             'initBinary': itm['InitBinary'],
-            # TODO check '-character needs to be removed from string:
-            # "['Warning1', 'Warning2']"
-            'warnings': str(itm['Warnings'])  # .replace('\'', ''),
+            'warnings': format_list_to_str(itm['Warnings'])
         }
+
+    @classmethod
+    def iterate_results(cls, data: dict):
+        itm = cls.on_item(data)
+        name = itm['name']
+        state = {}
+        state[cls.type_name] = {name: itm}
+        return state
