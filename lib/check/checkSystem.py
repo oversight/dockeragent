@@ -1,7 +1,7 @@
 import os
 
 from .base import Base
-from .utils import get_ts_from_time_str, format_list_to_str
+from .utils import get_ts_from_time_str, format_list
 
 
 class CheckSystem(Base):
@@ -59,7 +59,7 @@ class CheckSystem(Base):
             'liveRestoreEnabled': itm['LiveRestoreEnabled'],
             'isolation': itm['Isolation'],
             'initBinary': itm['InitBinary'],
-            'warnings': format_list_to_str(itm['Warnings'])
+            'warnings': format_list(itm['Warnings'])
         }
 
     @classmethod

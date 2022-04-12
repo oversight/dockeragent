@@ -1,7 +1,7 @@
 import os
 
 from .base import Base
-from .utils import format_list_to_str
+from .utils import format_list
 
 
 class CheckContainers(Base):
@@ -29,14 +29,14 @@ class CheckContainers(Base):
         resp_data = {
             'id': itm['Id'],
             'name': cls.format_name(itm['Names']),
-            'names': format_list_to_str(itm['Names']),
+            'names': format_list(itm['Names']),
             'image': itm['Image'],
             'imageId': itm['ImageID'],
             'command': itm['Command'],
             'created': itm['Created'],
             'state': itm['State'],
             'status': itm['Status'],
-            'ports': format_list_to_str(
+            'ports': format_list(
                 [cls.format_port(port) for port in itm['Ports']])
         }
 

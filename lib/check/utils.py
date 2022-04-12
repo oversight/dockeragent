@@ -8,7 +8,6 @@ def get_ts_from_time_str(time_str: str):
     return int(datetime.strptime(_time_str, '%Y-%m-%dT%H:%M:%S%z').timestamp())
 
 
-def format_list_to_str(_list: list):
-    # TODO check if '-character needs to be removed from string:
-    # "['hello', 'world']" or "[hello, world]"
-    return str(_list).replace('\'', '')
+def format_list(val):
+    joined = ' ,'.join(map(str, val))
+    return f'[{joined}]'
