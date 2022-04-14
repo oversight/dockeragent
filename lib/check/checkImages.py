@@ -24,6 +24,7 @@ class CheckImages(Base):
         containers = itm['Containers']
         shared_size = itm['SharedSize']
 
+        # check issue https://github.com/moby/moby/issues/43244
         if containers != -1:
             resp_data['containers'] = containers
         if shared_size != -1:
