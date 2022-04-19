@@ -2,10 +2,10 @@ import argparse
 import asyncio
 
 from setproctitle import setproctitle
-from lib.check import CHECKS
-from lib.version import __version__
-
 from lib.agent import Agent
+from lib.check import CHECKS
+from lib.logger import setup_logger
+from lib.version import __version__
 
 
 if __name__ == '__main__':
@@ -26,13 +26,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    setup_logger(args.log_level, args.log_colorized)
+
     cl = Agent(
         'dockeragent',
         __version__,
         CHECKS,
     )
-
-    cl.setup_logger(args.log_level, args.log_colorized)
 
     asyncio.get_event_loop().run_until_complete(
         cl.run_agent()

@@ -4,8 +4,6 @@ import os
 
 import aiohttp
 
-from .logger import setup_logger
-
 
 class Agent:
 
@@ -29,10 +27,6 @@ class Agent:
         self.environment_uuid = int(os.getenv('OSDA_ENVIRONMENT_UUID', '0'))
         self.host_uuid = int(os.getenv('OSDA_HOST_UUID', '0'))
         self.api_uri = os.getenv('OSDA_API_URI', None)
-
-    @staticmethod
-    def setup_logger(log_level: str = 'warning', log_colorized: bool = False):
-        setup_logger(log_level, log_colorized)
 
     async def send_data(self, check_name, check_data):
         headers = {
