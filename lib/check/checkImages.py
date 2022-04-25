@@ -9,7 +9,7 @@ class CheckImages(Base):
     interval = int(os.getenv('OSDA_CHECK_IMAGES_INTERVAL', '300'))
     type_name = 'images'
 
-    @classmethod
+    @staticmethod
     def on_item(itm: dict):
         resp_data = {
             'created': itm['Created'],

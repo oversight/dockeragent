@@ -26,14 +26,15 @@ class Agent:
         self.token = os.getenv('OSDA_TOKEN', None)
         self.environment_uuid = int(os.getenv('OSDA_ENVIRONMENT_UUID', '0'))
         self.host_uuid = int(os.getenv('OSDA_HOST_UUID', '0'))
-        self.api_uri = os.getenv('OSDA_API_URI', None)
+        self.api_uri = os.getenv('OSDA_API_URI', 'https://oversig.ht/api')
 
     async def send_data(self, check_name, check_data):
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self.token}'
         }
-        url = self.api_uri + '/api/data/insert'  # TODO ?
+
+        url = os.path.join(self.api_uri, '/data/insert')
         data = {
             "environmentUuid": self.environment_uuid,
             "hostUuid": self.host_uuid,
@@ -69,7 +70,7 @@ class Agent:
                 check_data = await check.run()
                 await self.send_data(check.__name__, check_data)
             except Exception as err:
-                logging.warning(f'on_run_check_loop {err}')
-                break  # TODO valid to break here?
-            else:
-                pass
+                logging.error(
+                    f'Check error: {err.__class__.__name__}: {err}')
+            finally:
+                await asyncio.sleep(check.interval)

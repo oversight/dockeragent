@@ -16,7 +16,9 @@ if __name__ == '__main__':
     parser.add_argument(
         '-l', '--log-level',
         default='warning',
-        help='set the log level or use the environment variable OS_LOG_LEVEL',
+        help=(
+            'set the log level or use the environment variable OSDA_LOG_LEVEL'
+        ),
         choices=['debug', 'info', 'warning', 'error'])
 
     parser.add_argument(

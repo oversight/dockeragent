@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import re
 
 import aiohttp
@@ -17,7 +16,6 @@ URL_RE = re.compile(
 
 class Base:
 
-    address = None
     api_call = ''
     api_version = 'v1.41'
     interval = 300
@@ -25,39 +23,15 @@ class Base:
 
     @classmethod
     async def run(cls):
-        try:
-            state_data = await cls.get_data()
-        except asyncio.TimeoutError:
-            raise Exception('Check timed out.')
-        except Exception as err:
-            raise Exception(f'Check error: {err.__class__.__name__}: {err}')
-        else:
-            return state_data
-
-    @classmethod
-    async def get_data(cls):
-        data = None
-        try:
-            data = await cls.run_check()
-        except Exception as err:
-            logging.exception(f'Docker error: `{err}`\n')
-            raise
-
-        try:
-            state = cls.iterate_results(data)
-        except Exception as err:
-            logging.exception(f'Dockeragent parse error: `{err}`\n')
-            raise
-
-        return state
-
-    @classmethod
-    async def run_check(cls):
         if cls.interval == 0:
             raise Exception(f'{cls.__name__} is disabled')
-        await asyncio.sleep(cls.interval)  # TODO is this right?
-        # TODO asyncio.wait_for?
-        return await cls.docker_api_call(cls.api_call)
+
+        data = await asyncio.wait_for(
+            cls.docker_api_call(cls.api_call),
+            timeout=10
+        )
+        state_data = cls.iterate_results(data)
+        return state_data
 
     @classmethod
     async def docker_api_call(cls, query: str):
@@ -68,13 +42,10 @@ class Base:
 
     @classmethod
     def get_conn(cls):
-        address = '/var/run/docker.sock' if cls.address is None \
-            else cls.address
+        address = '/var/run/docker.sock'
 
         if URL_RE.match(address):
-            raise NotImplementedError()
-            # TODO should this be implemented?
-            # return aiohttp.TCPConnector(address)
+            raise NotImplementedError('TCP connector is not implemented')
 
         return aiohttp.UnixConnector(path=address)
 

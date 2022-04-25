@@ -2,7 +2,7 @@ import colorlog
 import logging.handlers
 import os
 
-_LOG_LEVEL = os.getenv('OS_LOG_LEVEL')
+_LOG_LEVEL = os.getenv('OSDA_LOG_LEVEL')
 
 _LOG_DATE_FMT = '%y%m%d %H:%M:%S'
 
@@ -20,7 +20,7 @@ def setup_logger(log_level: str = 'warning', log_colorized: bool = False):
 
     Keyword arguments:
         log_level: Log level to use. May be overwritten by the environment
-                   variable `OS_LOG_LEVEL`. Default: `warning`.
+                   variable `OSDA_LOG_LEVEL`. Default: `warning`.
         log_colors: Use colors for logging.
     """
 
