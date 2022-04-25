@@ -8,7 +8,7 @@ def get_ts_from_time_str(time_str: str):
     return int(datetime.strptime(_time_str, '%Y-%m-%dT%H:%M:%S%z').timestamp())
 
 
-def format_list(val):
+def format_list(val: list):
     if val is None:
         return 'None'
 
