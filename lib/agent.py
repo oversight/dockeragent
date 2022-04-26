@@ -62,7 +62,6 @@ class Agent:
                f'to {self.api_uri}: `{e}`')
 
     async def run_agent(self):
-        print(self.token, self.api_uri, self.environment_uuid, self.host_uuid)
         if None in (self.token, self.api_uri, self.environment_uuid,
                     self.host_uuid):
             logging.error('invalid check configuration')
