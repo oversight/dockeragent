@@ -24,8 +24,8 @@ class Agent:
         ]
 
         self.token = os.getenv('OSDA_TOKEN', None)
-        self.environment_uuid = os.getenv('OSDA_ENVIRONMENT_UUID', '')
-        self.host_uuid = os.getenv('OSDA_HOST_UUID', '')
+        self.environment_uuid = os.getenv('OSDA_ENVIRONMENT_UUID', None)
+        self.host_uuid = os.getenv('OSDA_HOST_UUID', None)
         self.api_uri = os.getenv('OSDA_API_URI', 'https://oversig.ht/api')
 
     async def send_data(self, check_name, check_data):
@@ -62,8 +62,9 @@ class Agent:
                f'to {self.api_uri}: `{e}`')
 
     async def run_agent(self):
-        if None in (self.token, self.api_uri) or \
-                0 in (self.environment_uuid, self.host_uuid):
+        print(self.token, self.api_uri, self.environment_uuid, self.host_uuid)
+        if None in (self.token, self.api_uri, self.environment_uuid,
+                    self.host_uuid):
             logging.error('invalid check configuration')
             return
 
