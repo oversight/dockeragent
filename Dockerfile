@@ -3,5 +3,3 @@ ADD . /code
 WORKDIR /code
 RUN pip install --no-cache-dir -r requirements.txt
 CMD ["python", "dockeragent.py"]
-
-# docker run -v /var/run/docker.sock:/var/run/docker.sock {containerid}

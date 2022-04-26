@@ -19,7 +19,9 @@ class CheckSystem(Base):
             'containersStopped': itm['ContainersStopped'],
             'images': itm['Images'],
             'driver': itm['Driver'],
-            'systemStatus': str(itm['SystemStatus']),
+            # SystemStatus is omitted if the field is not set
+            # https://github.com/moby/moby/pull/40340
+            'systemStatus': str(itm.get('SystemStatus', None)),
             'memoryLimit': itm['MemoryLimit'],
             'swapLimit': itm['SwapLimit'],
             'kernelMemory': itm['KernelMemory'],

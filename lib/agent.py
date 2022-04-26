@@ -24,8 +24,8 @@ class Agent:
         ]
 
         self.token = os.getenv('OSDA_TOKEN', None)
-        self.environment_uuid = int(os.getenv('OSDA_ENVIRONMENT_UUID', '0'))
-        self.host_uuid = int(os.getenv('OSDA_HOST_UUID', '0'))
+        self.environment_uuid = os.getenv('OSDA_ENVIRONMENT_UUID', '')
+        self.host_uuid = os.getenv('OSDA_HOST_UUID', '')
         self.api_uri = os.getenv('OSDA_API_URI', 'https://oversig.ht/api')
 
     async def send_data(self, check_name, check_data):
@@ -34,7 +34,12 @@ class Agent:
             'Authorization': f'Bearer {self.token}'
         }
 
-        url = os.path.join(self.api_uri, '/data/insert')
+        # The latter strings shouldn't start with a slash. If they start with a
+        # slash, then they're considered an "absolute path" and everything
+        # before them is discarded.
+        # https://stackoverflow.com/questions/1945920/
+        # why-doesnt-os-path-join-work-in-this-case
+        url = os.path.join(self.api_uri, 'data/insert')
         data = {
             "environmentUuid": self.environment_uuid,
             "hostUuid": self.host_uuid,
@@ -42,6 +47,7 @@ class Agent:
             "check": check_name,
             "data": check_data
         }
+
         try:
             async with aiohttp.ClientSession(headers=headers) as session:
                 async with session.post(url, json=data) as r:
