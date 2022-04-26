@@ -31,7 +31,7 @@ if __name__ == '__main__':
     setup_logger(args.log_level, args.log_colorized)
 
     cl = Agent(
-        'dockeragent',
+        'dockerAgent',
         __version__,
         CHECKS,
     )
