@@ -5,6 +5,12 @@ import os
 import aiohttp
 
 
+def convert_verify_ssl(val):
+    if val is None or val.lower() in ['true', '1', 'y', 'yes']:
+        return None  # None for default SSL check
+    return False
+
+
 class Agent:
 
     def __init__(
@@ -27,7 +33,9 @@ class Agent:
         self.environment_uuid = os.getenv('OSDA_ENVIRONMENT_UUID', None)
         self.host_uuid = os.getenv('OSDA_HOST_UUID', None)
         self.api_uri = os.getenv('OSDA_API_URI', 'https://oversig.ht/api')
-        self.verify_ssl = os.getenv('OSDA_VERIFY_SSL', None)
+        self.verify_ssl = convert_verify_ssl(
+            os.getenv('OSDA_VERIFY_SSL', None)
+        )
 
     async def send_data(self, check_name, check_data):
         headers = {
