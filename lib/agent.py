@@ -27,6 +27,7 @@ class Agent:
         self.environment_uuid = os.getenv('OSDA_ENVIRONMENT_UUID', None)
         self.host_uuid = os.getenv('OSDA_HOST_UUID', None)
         self.api_uri = os.getenv('OSDA_API_URI', 'https://oversig.ht/api')
+        self.verify_ssl = os.getenv('OSDA_VERIFY_SSL', None)
 
     async def send_data(self, check_name, check_data):
         headers = {
@@ -50,7 +51,7 @@ class Agent:
 
         try:
             async with aiohttp.ClientSession(headers=headers) as session:
-                async with session.post(url, json=data, ssl=False) as r:
+                async with session.post(url, json=data, ssl=self.verify_ssl) as r:
                     if r.status != 200:
                         logging.warning(
                             'Got unexpected response status from ' +

@@ -12,3 +12,4 @@ Oversight Docker Agent
 * OSDA_HOST_UUID (default: 0)
 * OSDA_LOG_LEVEL
 * OSDA_TOKEN (default: None)
+* OSDA_VERIFY_SSL (default: None)
