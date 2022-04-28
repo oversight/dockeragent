@@ -50,7 +50,7 @@ class Agent:
 
         try:
             async with aiohttp.ClientSession(headers=headers) as session:
-                async with session.post(url, json=data) as r:
+                async with session.post(url, json=data, ssl=False) as r:
                     if r.status != 200:
                         logging.warning(
                             'Got unexpected response status from ' +
