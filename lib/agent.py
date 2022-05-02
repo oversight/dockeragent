@@ -91,5 +91,8 @@ class Agent:
             except Exception as err:
                 logging.error(
                     f'Check error: {err.__class__.__name__}: {err}')
+            else:
+                logging.debug(
+                    f'on_run_check_loop {self.host_uuid} {check.__name__} ok!')
             finally:
                 await asyncio.sleep(check.interval)
