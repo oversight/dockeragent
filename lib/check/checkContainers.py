@@ -47,6 +47,7 @@ class CheckContainers(Base):
 
     @classmethod
     def on_item_networks(cls, itm: dict):
+        # TODO few metrics contain data in dev, maybe adjust this check?
         network_data = {}
         container_name = cls.format_name(itm['Names'])
         for k, v in itm.get('NetworkSettings', {}).get('Networks', {}).items():
