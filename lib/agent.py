@@ -65,10 +65,15 @@ class Agent:
                     ssl=self.verify_ssl
                 ) as r:
                     if r.status != 200:
+                        try:
+                            err_text = await r.text()
+                        except Exception:
+                            err_text = 'unknown'
+
                         logging.warning(
-                            'Got unexpected response status from ' +
-                            f'{self.api_uri} {self._probe_name}.{check_name}' +
-                            f': {r.status}')
+                            'Got unexpected response status from '
+                            f'{url} {self._probe_name}.{check_name}'
+                            f': {r.status} ({err_text})')
         except aiohttp.ClientConnectorError as e:
             logging.warning(
                f'Failed to send data of {self._probe_name}.{check_name} ' +
