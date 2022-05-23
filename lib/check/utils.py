@@ -14,3 +14,7 @@ def format_list(val):
 
     joined = ' ,'.join(map(str, val))
     return f'[{joined}]'
+
+
+def format_name(names: list):
+    return names[0][1:]

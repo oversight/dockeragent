@@ -1,7 +1,7 @@
 import os
 
 from .base import Base
-from .utils import format_list
+from .utils import format_list, format_name
 
 
 class CheckContainers(Base):
@@ -14,10 +14,6 @@ class CheckContainers(Base):
     interval = int(os.getenv('OSDA_CHECK_CONTAINERS_INTERVAL', '300'))
 
     @staticmethod
-    def format_name(names: list):
-        return names[0][1:]
-
-    @staticmethod
     def format_port(port: dict):
         return (
             f"{port['IP']}:{port['PrivatePort']}"
@@ -28,7 +24,7 @@ class CheckContainers(Base):
     def on_item_containers(cls, itm: dict):
         resp_data = {
             'id': itm['Id'],
-            'name': cls.format_name(itm['Names']),
+            'name': format_name(itm['Names']),
             'names': format_list(itm['Names']),
             'image': itm['Image'],
             'imageId': itm['ImageID'],
@@ -49,7 +45,7 @@ class CheckContainers(Base):
     def on_item_networks(cls, itm: dict):
         # TODO few metrics contain data in dev, maybe adjust this check?
         network_data = {}
-        container_name = cls.format_name(itm['Names'])
+        container_name = format_name(itm['Names'])
         for k, v in itm.get('NetworkSettings', {}).get('Networks', {}).items():
             name = f'{container_name}_{k}'
             network_data[name] = {
