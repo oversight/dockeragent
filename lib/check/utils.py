@@ -21,6 +21,10 @@ def format_list(val):
     return f'[{joined}]'
 
 
+def format_name(names: list):
+    return names[0][1:]
+
+
 if __name__ == '__main__':
     a = get_ts_from_time_str('2022-04-05T11:30:56.93289351+02:00')
     b = get_ts_from_time_str('2022-04-05T11:30:56.93289351Z')

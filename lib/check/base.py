@@ -27,11 +27,15 @@ class Base:
             raise Exception(f'{cls.__name__} is disabled')
 
         data = await asyncio.wait_for(
-            cls.docker_api_call(cls.api_call),
+            cls.get_data(cls.api_call),
             timeout=10
         )
         state_data = cls.iterate_results(data)
         return state_data
+
+    @classmethod
+    async def get_data(cls, query: str):
+        return await cls.docker_api_call(query)
 
     @classmethod
     async def docker_api_call(cls, query: str):
