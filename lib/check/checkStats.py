@@ -10,7 +10,7 @@ class CheckStats(Base):
     api_call = '/containers/json'  # To get container ids
     interval = int(os.getenv('OSDA_CHECK_STATS_INTERVAL', '300'))
 
-    semaphore = asyncio.Semaphore(value=15)  # 15 requests in parallel
+    semaphore = asyncio.Semaphore(value=10)  # number requests in parallel
 
     @staticmethod
     def calculate_memory_percentage(stats):
