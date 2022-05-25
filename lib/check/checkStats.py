@@ -1,4 +1,6 @@
 import os
+import asyncio
+import logging
 
 from .base import Base
 from .utils import format_name
@@ -7,6 +9,8 @@ from .utils import format_name
 class CheckStats(Base):
     api_call = '/containers/json'  # To get container ids
     interval = int(os.getenv('OSDA_CHECK_STATS_INTERVAL', '300'))
+
+    semaphore = asyncio.Semaphore(value=15)  # 15 request in parallel
 
     @staticmethod
     def calculate_memory_percentage(stats):
@@ -29,17 +33,28 @@ class CheckStats(Base):
         return (cpu_delta / system_cpu_delta) * number_cpus * 100.0
 
     @classmethod
-    async def get_data(cls, query: str):
-        # 1. get container ids
-        containers = await cls.docker_api_call(query)
-        stats = []
-        for container in containers:
-            container_id = container['Id']
-            query = f'/containers/{container_id}/stats?stream=false'
-            # 2. get stats per container
+    async def task(cls, container, stats):
+        container_id = container['Id']
+        query = f'/containers/{container_id}/stats?stream=false'
+        async with cls.semaphore:
+            logging.debug(f'get stats: {query}')
             s = await cls.docker_api_call(query)
             s['name'] = format_name(container['Names'])
             stats.append(s)
+
+    @classmethod
+    async def get_data(cls, query: str):
+        # 1. get container ids
+        logging.debug('get containers')
+        containers = await cls.docker_api_call(query)
+        stats = []
+        tasks = []
+
+        for container in containers:
+            # 2. get stats per container
+            tasks.append(cls.task(container, stats))
+
+        await asyncio.gather(*tasks)
         return stats
 
     @classmethod

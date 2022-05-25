@@ -28,7 +28,7 @@ class Base:
 
         data = await asyncio.wait_for(
             cls.get_data(cls.api_call),
-            timeout=10
+            timeout=60.0  # 60 seconds
         )
         state_data = cls.iterate_results(data)
         return state_data
