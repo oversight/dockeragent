@@ -15,8 +15,23 @@ class CheckStats(Base):
     @staticmethod
     def calculate_memory_percentage(stats):
         memory_stats = stats['memory_stats']
+        stats = memory_stats['stats']
 
-        used_memory = memory_stats['usage'] - memory_stats['stats']['cache']
+        # On Linux, the Docker CLI reports memory usage by subtracting cache
+        # usage from the total memory usage. The API does not perform such a
+        # calculation but rather provides the total memory usage and the amount
+        # from the cache so that clients can use the data as needed. The cache
+        # usage is defined as the value of total_inactive_file field in the
+        # memory.stat file on cgroup v1 hosts.
+        # On Docker 19.03 and older, the cache usage was defined as the value
+        # of cache field. On cgroup v2 hosts, the cache usage is defined as the
+        # value of inactive_file field.
+        # https://docs.docker.com/engine/reference/commandline/stats/
+        used_memory = memory_stats['usage'] - stats.get(
+            'cache',
+            stats.get(
+                'inactive_file',
+                stats.get('total_inactive_file', 0)))
         return (used_memory / memory_stats['limit']) * 100.0
 
     @staticmethod
@@ -29,7 +44,17 @@ class CheckStats(Base):
         cpu_delta = cpu_usage['total_usage'] - precpu_usage['total_usage']
         system_cpu_delta = cpu_stats['system_cpu_usage'] - \
             precpu_stats['system_cpu_usage']
-        number_cpus = len(cpu_usage['percpu_usage'])
+
+        # If either precpu_stats.online_cpus or cpu_stats.online_cpus is nil
+        # then for compatibility with older daemons the length of the
+        # corresponding cpu_usage.percpu_usage array should be used.
+        # https://docs.docker.com/engine/api/v1.41/#operation/ContainerExport
+        number_cpus = cpu_stats.get(
+            'online_cpus',
+            precpu_stats.get(
+                'online_cpus',
+                len(cpu_usage.get('percpu_usage', []))))
+
         return (cpu_delta / system_cpu_delta) * number_cpus * 100.0
 
     @classmethod
